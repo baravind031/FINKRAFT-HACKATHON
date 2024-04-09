@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transactions Table</title>
+    <!-- Ag-Grid CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/ag-grid-community/dist/styles/ag-grid.css">
+    <link rel="stylesheet" href="https://unpkg.com/ag-grid-community/dist/styles/ag-theme-alpine.css">
+</head>
+
+<body>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+    }
+
+    h1 {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    .ag-theme-alpine {
+        height: 500px;
+        width: 80%;
+        margin: 0 auto;
+    }
+
+    .upload-form {
+        text-align: center;
+        margin-top: 20px;
+        margin-bottom: 20px;
+    }
+
+    .upload-button {
+        padding: 10px 20px;
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+    .upload-button:hover {
+        background-color: #0056b3;
+    }
+</style>
+<h1>Transactions Table</h1>
+<!-- Ag-Grid container -->
+<div id="transactionsGrid" class="ag-theme-alpine" style="height: 500px;"></div>
+
+<!-- Upload file form -->
+<h2>Upload CSV File</h2>
+<form id="uploadForm" enctype="multipart/form-data">
+    <input type="file" id="fileInput" name="file">
+    <button type="submit">Upload</button>
+</form>
+
+<!-- Include ag-Grid scripts -->
+<script src="https://unpkg.com/ag-grid-community/dist/ag-grid-community.min.noStyle.js"></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Initialize ag-Grid
+        var gridOptions = {
+            columnDefs: [
+                {
+                    headerName: "Transaction ID",
+                    field: "TransactionID",
+                    editable: false
+                },
+                {
+                    headerName: "Customer Name",
+                    field: "CustomerName",
+                    editable: true
+                },
+                {
+                    headerName: "Transaction Date",
+                    field: "TransactionDate",
+                    editable: true
+                },
+                {
+                    headerName: "Amount",
+                    field: "Amount",
+                    editable: true
+                },
+                {
+                    headerName: "Status",
+                    field: "Status",
+                    editable: true
+                }
+            ],
+            defaultColDef: {
+                flex: 1,
+                minWidth: 100,
+                resizable: true
+            },
+            rowSelection: 'single' // Allow only single row selection
+        };
+
+        // Get transactions data and populate ag-Grid
+        fetch('/transactions')
+            .then(response => response.json())
+            .then(data => {
+                var transactionsGrid = document.getElementById('transactionsGrid');
+                new agGrid.Grid(transactionsGrid, gridOptions);
+                gridOptions.api.setRowData(data);
+            })
+            .catch(error => console.error('Error:', error));
+    });
+</script>
+</body>
+</html>
